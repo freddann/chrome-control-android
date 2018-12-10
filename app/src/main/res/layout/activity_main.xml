@@ -24,9 +24,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:onClick="sendMessage"
         android:text="@string/button_next"
-        app:layout_constraintBaseline_toBaselineOf="@+id/prevTab"
+        app:layout_constraintBottom_toTopOf="@+id/tabView"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
@@ -35,9 +36,25 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:onClick="sendMessage"
-        android:text="Button"
+        android:text="Refresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/tabView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/getAll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prevTab"
+        tools:listitem="@layout/fragment_tab_list" />
 
 </android.support.constraint.ConstraintLayout>
