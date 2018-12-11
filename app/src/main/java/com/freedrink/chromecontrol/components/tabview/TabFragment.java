@@ -1,4 +1,4 @@
-package com.freedrink.chromecontrol.components;
+package com.freedrink.chromecontrol.components.tabview;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.freedrink.chromecontrol.R;
-import com.freedrink.chromecontrol.components.dummy.TabsContent;
-import com.freedrink.chromecontrol.components.dummy.TabsContent.TabItem;
+import com.freedrink.chromecontrol.components.tabview.TabsContent.TabItem;
 
 /**
  * A fragment representing a list of Items.

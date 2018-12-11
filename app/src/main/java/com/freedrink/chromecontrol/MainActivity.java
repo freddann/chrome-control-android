@@ -7,18 +7,24 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.freedrink.chromecontrol.components.MyTabRecyclerViewAdapter;
-import com.freedrink.chromecontrol.components.TabFragment;
-import com.freedrink.chromecontrol.components.dummy.TabsContent;
+import com.freedrink.chromecontrol.callbacks.InitTabsView;
+import com.freedrink.chromecontrol.callbacks.TabsTouchHelper;
+import com.freedrink.chromecontrol.components.tabview.CenterZoomLayoutManager;
+import com.freedrink.chromecontrol.components.tabview.MyTabRecyclerViewAdapter;
+import com.freedrink.chromecontrol.components.tabview.OverlapViewItems;
+import com.freedrink.chromecontrol.components.tabview.TabFragment;
+import com.freedrink.chromecontrol.components.tabview.TabsContent;
 import com.freedrink.chromecontrol.http.HttpRequest;
-import com.freedrink.chromecontrol.callbacks.InitCallback;
 import com.freedrink.chromecontrol.http.ResponseCallback;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String HOST = "http://10.0.2.2:8887";
 
-    private InitCallback initCallback;
+    private InitTabsView initTabsView;
+    private TabsContent tabsContent;
+    MyTabRecyclerViewAdapter adapter;
+    LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +32,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView tabs = (RecyclerView) findViewById(R.id.tabView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        tabs.setLayoutManager(linearLayoutManager);
+        layoutManager = new CenterZoomLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        tabs.addItemDecoration(new OverlapViewItems());
+        tabs.setLayoutManager(layoutManager);
 
-        TabsContent content = new TabsContent();
-        MyTabRecyclerViewAdapter adapter = new MyTabRecyclerViewAdapter(content, new TabFragment.OnListFragmentInteractionListener() {
+        tabsContent = new TabsContent();
+        adapter = new MyTabRecyclerViewAdapter(tabsContent, new TabFragment.OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(TabsContent.TabItem item) {
                 Log.d("TabRecycler", item.toString());
@@ -39,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         tabs.setAdapter(adapter);
+        tabsContent.setListener(adapter);
+        new TabsTouchHelper(tabsContent).attachToRecyclerView(tabs);
 
-        initCallback = new InitCallback(content, adapter);
-        new HttpRequest(HOST, initCallback).execute("GET", "/getAllWindows");
+        initTabsView = new InitTabsView(tabsContent);
+        new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
     }
 
     public void sendMessage(View view){
@@ -54,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusNextTab");
                 break;
                 case R.id.getAll:
-                new HttpRequest(HOST, initCallback).execute("GET", "/getAllWindows");
+                new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
                 break;
             default:
                 Log.e(TAG, "ERROR? Suspicious call to sendMessage");

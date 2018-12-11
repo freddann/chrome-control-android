@@ -1,22 +1,22 @@
-package com.freedrink.chromecontrol.components;
+package com.freedrink.chromecontrol.components.tabview;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.freedrink.chromecontrol.R;
-import com.freedrink.chromecontrol.components.TabFragment.OnListFragmentInteractionListener;
-import com.freedrink.chromecontrol.components.dummy.TabsContent;
-import com.freedrink.chromecontrol.components.dummy.TabsContent.TabItem;
+import com.freedrink.chromecontrol.components.tabview.TabFragment.OnListFragmentInteractionListener;
+import com.freedrink.chromecontrol.components.tabview.TabsContent.TabItem;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link TabItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecyclerViewAdapter.ViewHolder> {
+public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecyclerViewAdapter.ViewHolder> implements TabsContent.Listener {
 
     private final TabsContent mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -35,20 +35,20 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).title);
-        holder.mUrlView.setText(mValues.get(position).url);
+        final TabItem item = mValues.get(position);
+            holder.mTitleView.setText(item.title);
+            holder.mUrlView.setText(item.url);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction(item);
+                    }
                 }
-            }
-        });
+            });
     }
 
     @Override
@@ -56,10 +56,31 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
         return mValues.size();
     }
 
+    @Override
+    public void onRemove(TabItem item) {
+        notifyItemRemoved(item.id);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateContent(){
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAdd(TabItem item) {
+        notifyItemInserted(item.id);
+        notifyItemRangeChanged(item.id, mValues.size());
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView, mUrlView;
-        public TabItem mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -73,4 +94,5 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
             return super.toString() + " '" + mTitleView.getText() + "'";
         }
     }
+
 }

@@ -22,13 +22,14 @@
         android:id="@+id/nextTab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginBottom="16dp"
         android:onClick="sendMessage"
         android:text="@string/button_next"
+        android:textAllCaps="true"
         app:layout_constraintBottom_toTopOf="@+id/tabView"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/prevTab" />
 
     <Button
         android:id="@+id/getAll"
@@ -56,5 +57,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/prevTab"
         tools:listitem="@layout/fragment_tab_list" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/newTab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:clickable="true"
+        android:tint="@android:color/black"
+        app:backgroundTint="@android:color/transparent"
+        app:backgroundTintMode="src_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </android.support.constraint.ConstraintLayout>

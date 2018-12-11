@@ -9,5 +9,6 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     android:scrollbars="vertical"
-    tools:context=".components.TabFragment"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    tools:context=".components.tabview.TabFragment"
     tools:listitem="@layout/fragment_tab" />
