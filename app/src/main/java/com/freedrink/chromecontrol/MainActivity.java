@@ -71,4 +71,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void createTab(View view){
+        int pos = tabsContent.size();
+        tabsContent.addItem(pos,"New tab", "url");
+        layoutManager.scrollToPosition(pos);
+    }
+
 }
