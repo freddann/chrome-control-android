@@ -1,15 +1,16 @@
 package com.freedrink.chromecontrol;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.freedrink.chromecontrol.callbacks.InitTabsView;
-import com.freedrink.chromecontrol.callbacks.TabsTouchHelper;
 import com.freedrink.chromecontrol.components.tabview.CenterZoomLayoutManager;
 import com.freedrink.chromecontrol.components.tabview.MyTabRecyclerViewAdapter;
 import com.freedrink.chromecontrol.components.tabview.OverlapViewItems;
@@ -51,7 +52,22 @@ public class MainActivity extends AppCompatActivity {
         });
         tabs.setAdapter(adapter);
         tabsContent.setListener(adapter);
-        new TabsTouchHelper(tabsContent).attachToRecyclerView(tabs);
+
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                Log.d("Swipe", viewHolder.toString() + String.valueOf(i));
+                int pos = viewHolder.getAdapterPosition();
+                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/closeTabByIndex?value=" + pos);
+                tabsContent.removeItem(pos);
+            }
+        }).attachToRecyclerView(tabs);
 
         initTabsView = new InitTabsView(tabsContent);
         new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
@@ -82,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         tabsContent.addItem("New tab", "url");
         layoutManager.scrollToPosition(pos);
         tabsContent.setSelected(pos);
+
+        new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/createNewTab");
 
         View currentTab = findViewById(R.id.currentTab);
         if (currentTab.getVisibility() == View.VISIBLE) {
