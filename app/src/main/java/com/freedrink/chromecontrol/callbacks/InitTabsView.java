@@ -2,7 +2,6 @@ package com.freedrink.chromecontrol.callbacks;
 
 import android.util.Log;
 
-import com.freedrink.chromecontrol.components.tabview.MyTabRecyclerViewAdapter;
 import com.freedrink.chromecontrol.components.tabview.TabsContent;
 import com.freedrink.chromecontrol.http.ResponseCallback;
 
@@ -29,7 +28,7 @@ public class InitTabsView implements ResponseCallback {
                 JSONArray allTabs = window.getJSONArray("tabs");
                 for (int i = 0; i < allTabs.length(); i++){
                     JSONObject tab = allTabs.getJSONObject(i);
-                    tabs.addItemNoNotify(tab.getInt("index"), tab.getString("title"), tab.getString("url"));
+                    tabs.addItemNoNotify(tab.getString("title"), tab.getString("url"));
                 }
                 tabs.update();
             } else {

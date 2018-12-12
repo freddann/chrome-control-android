@@ -57,8 +57,8 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
     }
 
     @Override
-    public void onRemove(TabItem item) {
-        notifyItemRemoved(item.id);
+    public void onRemove(TabItem item, int position) {
+        notifyItemRemoved(position);
         notifyDataSetChanged();
     }
 
@@ -68,9 +68,9 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
     }
 
     @Override
-    public void onAdd(TabItem item) {
-        notifyItemInserted(item.id);
-        notifyItemRangeChanged(item.id, mValues.size());
+    public void onAdd(TabItem item, int position) {
+        notifyItemInserted(position);
+        notifyItemRangeChanged(position, mValues.size());
     }
 
     @Override

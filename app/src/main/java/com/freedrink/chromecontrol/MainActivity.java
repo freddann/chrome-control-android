@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.freedrink.chromecontrol.callbacks.InitTabsView;
 import com.freedrink.chromecontrol.callbacks.TabsTouchHelper;
@@ -41,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MyTabRecyclerViewAdapter(tabsContent, new TabFragment.OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(TabsContent.TabItem item) {
-                Log.d("TabRecycler", item.toString());
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusTabByIndex?value="+ item.id);
+                int index = tabsContent.indexOf(item);
+                Log.d("TabRecycler", item.toString() + index);
+                tabsContent.setSelected(index);
+                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusTabByIndex?value="+ index);
+                toggleTabsView(null);
             }
         });
         tabs.setAdapter(adapter);
@@ -58,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
         switch(id){
             case R.id.prevTab:
                 new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusPreviousTab");
+                tabsContent.selectPrevious();
                 break;
             case R.id.nextTab:
                 new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusNextTab");
+                tabsContent.selectNext();
                 break;
                 case R.id.getAll:
                 new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
@@ -73,8 +79,36 @@ public class MainActivity extends AppCompatActivity {
 
     public void createTab(View view){
         int pos = tabsContent.size();
-        tabsContent.addItem(pos,"New tab", "url");
+        tabsContent.addItem("New tab", "url");
         layoutManager.scrollToPosition(pos);
+        tabsContent.setSelected(pos);
+
+        View currentTab = findViewById(R.id.currentTab);
+        if (currentTab.getVisibility() == View.VISIBLE) {
+            replaceCurrentTab(currentTab, pos);
+        }
+    }
+
+    public void toggleTabsView(View view){
+        View tabs = findViewById(R.id.tabView);
+        View currentTab = findViewById(R.id.currentTab);
+        if (tabs.getVisibility() == View.VISIBLE){
+            tabs.setVisibility(View.INVISIBLE);
+            currentTab.setVisibility(View.VISIBLE);
+
+            replaceCurrentTab(currentTab, tabsContent.getSelectedIndex());
+        } else {
+            tabs.setVisibility(View.VISIBLE);
+            currentTab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void replaceCurrentTab(View currentTab, int index){
+        TabsContent.TabItem currentItem = tabsContent.get(index);
+        TextView currentTitle = (TextView) currentTab.findViewById(R.id.title);
+        TextView currentUrl = (TextView) currentTab.findViewById(R.id.url);
+        currentTitle.setText(currentItem.title);
+        currentUrl.setText(currentItem.url);
     }
 
 }
