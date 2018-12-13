@@ -16,7 +16,7 @@ import com.freedrink.chromecontrol.components.tabview.TabsContent.TabItem;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecyclerViewAdapter.ViewHolder> implements TabsContent.Listener {
+public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecyclerViewAdapter.ViewHolder> implements TabsContent.ListListener {
 
     private final TabsContent mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -71,6 +71,11 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
     public void onAdd(TabItem item, int position) {
         notifyItemInserted(position);
         notifyItemRangeChanged(position, mValues.size());
+    }
+
+    @Override
+    public void onUpdate(TabItem item, int position) {
+        notifyItemInserted(position);
     }
 
     @Override

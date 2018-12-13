@@ -52,6 +52,17 @@ public class MainActivity extends AppCompatActivity {
         });
         tabs.setAdapter(adapter);
         tabsContent.setListener(adapter);
+        tabsContent.setSelectedItemListener(new TabsContent.SelectedItemListener() {
+            @Override
+            public void onUpdate(TabsContent.TabItem item, int position) {
+                View currentTab = findViewById(R.id.currentTab);
+                TextView currentTitle = (TextView) currentTab.findViewById(R.id.title);
+                TextView currentUrl = (TextView) currentTab.findViewById(R.id.url);
+                currentTitle.setText(item.title);
+                currentUrl.setText(item.url);
+                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/setUrl?url=" + item.url);
+            }
+        });
 
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -100,11 +111,6 @@ public class MainActivity extends AppCompatActivity {
         tabsContent.setSelected(pos);
 
         new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/createNewTab");
-
-        View currentTab = findViewById(R.id.currentTab);
-        if (currentTab.getVisibility() == View.VISIBLE) {
-            replaceCurrentTab(currentTab, pos);
-        }
     }
 
     public void toggleTabsView(View view){
@@ -113,20 +119,10 @@ public class MainActivity extends AppCompatActivity {
         if (tabs.getVisibility() == View.VISIBLE){
             tabs.setVisibility(View.INVISIBLE);
             currentTab.setVisibility(View.VISIBLE);
-
-            replaceCurrentTab(currentTab, tabsContent.getSelectedIndex());
         } else {
             tabs.setVisibility(View.VISIBLE);
             currentTab.setVisibility(View.INVISIBLE);
         }
-    }
-
-    public void replaceCurrentTab(View currentTab, int index){
-        TabsContent.TabItem currentItem = tabsContent.get(index);
-        TextView currentTitle = (TextView) currentTab.findViewById(R.id.title);
-        TextView currentUrl = (TextView) currentTab.findViewById(R.id.url);
-        currentTitle.setText(currentItem.title);
-        currentUrl.setText(currentItem.url);
     }
 
 }

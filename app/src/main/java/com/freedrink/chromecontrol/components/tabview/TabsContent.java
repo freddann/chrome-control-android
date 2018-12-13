@@ -3,9 +3,7 @@ package com.freedrink.chromecontrol.components.tabview;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample title for user interfaces created by
@@ -17,11 +15,13 @@ public class TabsContent {
     private final List<TabItem> ITEMS = new ArrayList<TabItem>();
 
     private int selectedIndex = 0;
-    private TabsContent.Listener listener = null;
+    private ListListener listener = null;
+    private SelectedItemListener selectedItemListener = null;
 
-    public void setListener(TabsContent.Listener listener){
+    public void setListener(ListListener listener){
         this.listener = listener;
     }
+    public void setSelectedItemListener(SelectedItemListener listener) { this.selectedItemListener = listener; }
 
     public TabItem addItemNoNotify(String title, String url){
         TabItem item = new TabItem(title, url);
@@ -61,14 +61,30 @@ public class TabsContent {
 
     public void setSelected(int index){
         selectedIndex = index;
+        onUpdateSelectedIndex();
     }
 
     public void selectPrevious(){
-        selectedIndex = Math.max(0, selectedIndex-1);
+        selectedIndex--;
+        if (selectedIndex < 0){
+            selectedIndex = size() - 1;
+        }
+        onUpdateSelectedIndex();
     }
 
     public void selectNext(){
-        selectedIndex = Math.min(size(), selectedIndex+1);
+        selectedIndex++;
+        if (selectedIndex >= size()){
+            selectedIndex = 0;
+        }
+        onUpdateSelectedIndex();
+    }
+
+    public void replaceItem(int index, String title, String url){
+        TabItem item = new TabItem(title, url);
+        ITEMS.set(index, item);
+        if (listener != null)
+            listener.onUpdate(item, index);
     }
 
     public int getSelectedIndex(){
@@ -86,8 +102,14 @@ public class TabsContent {
     public void update(){
         if (listener != null)
             listener.updateContent();
+        onUpdateSelectedIndex();
+
     }
 
+    private void onUpdateSelectedIndex(){
+        if (selectedItemListener != null)
+            selectedItemListener.onUpdate(ITEMS.get(selectedIndex), selectedIndex);
+    }
     /**
      * A dummy item representing a piece of title.
      */
@@ -106,9 +128,14 @@ public class TabsContent {
         }
     }
 
-    public interface Listener{
+    public interface ListListener {
         public void onRemove(TabItem item, int position);
         public void onAdd(TabItem item, int position);
+        public void onUpdate(TabItem item, int position);
         public void updateContent();
+    }
+
+    public interface SelectedItemListener {
+        public void onUpdate(TabItem item, int position);
     }
 }
