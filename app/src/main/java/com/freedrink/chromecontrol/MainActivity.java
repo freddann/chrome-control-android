@@ -7,7 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.freedrink.chromecontrol.callbacks.InitTabsView;
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView tabs = (RecyclerView) findViewById(R.id.tabView);
-        layoutManager = new CenterZoomLayoutManager(this);
+        layoutManager = new CenterZoomLayoutManager(tabs.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         tabs.addItemDecoration(new OverlapViewItems());
         tabs.setLayoutManager(layoutManager);
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 TextView currentUrl = (TextView) currentTab.findViewById(R.id.url);
                 currentTitle.setText(item.title);
                 currentUrl.setText(item.url);
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/setUrl?url=" + item.url);
             }
         });
 
@@ -82,6 +84,23 @@ public class MainActivity extends AppCompatActivity {
 
         initTabsView = new InitTabsView(tabsContent);
         new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
+
+        ((EditText)(findViewById(R.id.currentTab).findViewById(R.id.url))).setOnEditorActionListener(
+                new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE){
+                            int index = tabsContent.getSelectedIndex();
+                            String url = String.valueOf(v.getText());
+                            TabsContent.TabItem item = tabsContent.get(index);
+                            tabsContent.replaceItem(index, item.title, url);
+                            Log.d("EditUrlDone", url);
+                            new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/setUrl?url=" + url);
+                            return true;
+                        }
+                        return false;
+                    }
+                });
     }
 
     public void sendMessage(View view){
