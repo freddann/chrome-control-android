@@ -127,7 +127,7 @@
         android:layout_marginRight="16dp"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="createTab"
+        android:onClick="sendMessage"
         android:tint="?android:attr/colorForeground"
         app:backgroundTint="?attr/colorButtonNormal"
         app:layout_constraintEnd_toEndOf="parent"

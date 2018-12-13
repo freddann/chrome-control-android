@@ -85,6 +85,8 @@ public class TabsContent {
         ITEMS.set(index, item);
         if (listener != null)
             listener.onUpdate(item, index);
+        if (index == selectedIndex)
+            onUpdateSelectedIndex();
     }
 
     public int getSelectedIndex(){

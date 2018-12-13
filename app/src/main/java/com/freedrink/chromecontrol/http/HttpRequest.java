@@ -49,7 +49,8 @@ public class HttpRequest extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        callback.call(server_response);
+        if (server_response != null)
+            callback.call(server_response);
     }
 
     public void execute(String method, String path){

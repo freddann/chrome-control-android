@@ -13,7 +13,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.freedrink.chromecontrol.callbacks.InitTabsView;
 import com.freedrink.chromecontrol.components.tabview.CenterZoomLayoutManager;
 import com.freedrink.chromecontrol.components.tabview.MyTabRecyclerViewAdapter;
 import com.freedrink.chromecontrol.components.tabview.OverlapViewItems;
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String HOST = "http://10.0.2.2:8887";
 
-    private InitTabsView initTabsView;
+    private ResponseCallback httpCallback;
     private TabsContent tabsContent;
     MyTabRecyclerViewAdapter adapter;
     LinearLayoutManager layoutManager;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 int index = tabsContent.indexOf(item);
                 Log.d("TabRecycler", item.toString() + index);
                 tabsContent.setSelected(index);
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusTabByIndex?value="+ index);
+                new HttpRequest(HOST, httpCallback).execute("POST", "/focusTabByIndex?value="+ index);
                 toggleTabsView(null);
             }
         });
@@ -76,27 +75,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                Log.d("Swipe", viewHolder.toString() + String.valueOf(i));
                 int pos = viewHolder.getAdapterPosition();
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/closeTabByIndex?value=" + pos);
-                tabsContent.removeItem(pos);
+                new HttpRequest(HOST, httpCallback).execute("POST", "/closeTabByIndex?value=" + pos);
             }
         }).attachToRecyclerView(tabs);
 
-        initTabsView = new InitTabsView(tabsContent);
-        new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
+        httpCallback = new ResponseCallback(tabsContent);
+        new HttpRequest(HOST, httpCallback).execute("GET", "/getAllWindows");
 
         ((EditText)(findViewById(R.id.currentTab).findViewById(R.id.url))).setOnEditorActionListener(
                 new EditText.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_DONE){
-                            int index = tabsContent.getSelectedIndex();
                             String url = String.valueOf(v.getText());
-                            TabsContent.TabItem item = tabsContent.get(index);
-                            tabsContent.replaceItem(index, item.title, url);
-                            Log.d("EditUrlDone", url);
-                            new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/setUrl?url=" + url);
+                            new HttpRequest(HOST, httpCallback).execute("POST", "/setUrl?url=" + url);
                             return true;
                         }
                         return false;
@@ -108,28 +101,21 @@ public class MainActivity extends AppCompatActivity {
         final int id = view.getId();
         switch(id){
             case R.id.prevTab:
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusPreviousTab");
-                tabsContent.selectPrevious();
+                new HttpRequest(HOST, httpCallback).execute("POST", "/focusPreviousTab");
                 break;
             case R.id.nextTab:
-                new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/focusNextTab");
-                tabsContent.selectNext();
+                new HttpRequest(HOST, httpCallback).execute("POST", "/focusNextTab");
                 break;
                 case R.id.getAll:
-                new HttpRequest(HOST, initTabsView).execute("GET", "/getAllWindows");
+                new HttpRequest(HOST, httpCallback).execute("GET", "/getAllWindows");
+                break;
+            case R.id.newTab:
+                new HttpRequest(HOST, httpCallback).execute("POST", "/createNewTab");
                 break;
             default:
                 Log.e(TAG, "ERROR? Suspicious call to sendMessage");
                 break;
         }
-    }
-
-    public void createTab(View view){
-        int pos = tabsContent.size();
-        tabsContent.addItem("New tab", "url");
-        tabsContent.setSelected(pos);
-
-        new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/createNewTab");
     }
 
     public void toggleTabsView(View view){

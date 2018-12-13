@@ -74,7 +74,7 @@ public class MyTabRecyclerViewAdapter extends RecyclerView.Adapter<MyTabRecycler
 
     @Override
     public void onUpdate(TabItem item, int position) {
-        notifyItemInserted(position);
+        notifyItemChanged(position);
     }
 
     @Override
