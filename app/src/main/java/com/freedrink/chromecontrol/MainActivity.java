@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView tabs = (RecyclerView) findViewById(R.id.tabView);
+        final RecyclerView tabs = (RecyclerView) findViewById(R.id.tabView);
         layoutManager = new CenterZoomLayoutManager(tabs.getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         tabs.addItemDecoration(new OverlapViewItems());
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView currentUrl = (TextView) currentTab.findViewById(R.id.url);
                 currentTitle.setText(item.title);
                 currentUrl.setText(item.url);
+                tabs.smoothScrollToPosition(position);
             }
         });
 
@@ -126,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     public void createTab(View view){
         int pos = tabsContent.size();
         tabsContent.addItem("New tab", "url");
-        layoutManager.scrollToPosition(pos);
         tabsContent.setSelected(pos);
 
         new HttpRequest(HOST, ResponseCallback.LOG).execute("POST", "/createNewTab");
