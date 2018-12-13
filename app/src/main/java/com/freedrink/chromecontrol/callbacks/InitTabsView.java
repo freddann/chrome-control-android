@@ -29,6 +29,9 @@ public class InitTabsView implements ResponseCallback {
                 for (int i = 0; i < allTabs.length(); i++){
                     JSONObject tab = allTabs.getJSONObject(i);
                     tabs.addItemNoNotify(tab.getString("title"), tab.getString("url"));
+                    if (tab.getBoolean("focused")){
+                        tabs.setSelected(i);
+                    }
                 }
                 tabs.update();
             } else {
