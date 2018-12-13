@@ -121,12 +121,18 @@ public class MainActivity extends AppCompatActivity {
     public void toggleTabsView(View view){
         View tabs = findViewById(R.id.tabView);
         View currentTab = findViewById(R.id.currentTab);
+        View nextTabButton = findViewById(R.id.nextTab);
+        View prevTabButton = findViewById(R.id.prevTab);
         if (tabs.getVisibility() == View.VISIBLE){
             tabs.setVisibility(View.INVISIBLE);
             currentTab.setVisibility(View.VISIBLE);
+            nextTabButton.setVisibility(View.VISIBLE);
+            prevTabButton.setVisibility(View.VISIBLE);
         } else {
             tabs.setVisibility(View.VISIBLE);
             currentTab.setVisibility(View.INVISIBLE);
+            nextTabButton.setVisibility(View.INVISIBLE);
+            prevTabButton.setVisibility(View.INVISIBLE);
         }
     }
 

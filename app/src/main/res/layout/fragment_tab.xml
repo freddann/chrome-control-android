@@ -15,7 +15,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_launcher_background"
         android:orientation="vertical">
 
         <TextView
@@ -23,11 +22,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="#AAFFFFFF"
+            android:background="@color/colorPrimaryTransparent"
             android:drawableStart="@android:drawable/checkbox_on_background"
             android:drawableLeft="@android:drawable/checkbox_on_background"
             android:drawablePadding="10dp"
             android:padding="10dp"
+            android:singleLine="true"
 
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
